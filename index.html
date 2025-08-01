@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANIMAGENT - Epic Retro Animation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #00ff00;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+        }
+
+        /* Retro scanlines effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                transparent 50%,
+                rgba(0, 255, 0, 0.02) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* CRT flicker effect */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(
+                circle at center,
+                transparent 0%,
+                rgba(0, 255, 0, 0.03) 100%
+            );
+            pointer-events: none;
+            z-index: 1001;
+            animation: flicker 0.15s infinite;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.95; }
+        }
+
+        .main-container {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: radial-gradient(circle at center, #001100 0%, #000 70%);
+        }
+
+        .title-section {
+            text-align: center;
+            margin-bottom: 50px;
+            z-index: 10;
+        }
+
+        .main-title {
+            font-size: 4rem;
+            font-weight: bold;
+            text-shadow: 
+                0 0 10px #00ff00,
+                0 0 20px #00ff00,
+                0 0 30px #00ff00,
+                0 0 40px #00ff00;
+            animation: glow 2s ease-in-out infinite alternate;
+            letter-spacing: 8px;
+            margin-bottom: 20px;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00; }
+            to { text-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00, 0 0 40px #00ff00, 0 0 50px #00ff00; }
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #00cc00;
+            text-shadow: 0 0 5px #00cc00;
+            margin-bottom: 30px;
+        }
+
+        .tagline {
+            font-size: 1rem;
+            color: #009900;
+            font-style: italic;
+        }
+
+        .animation-canvas {
+            border: 3px solid #00ff00;
+            border-radius: 10px;
+            box-shadow: 
+                0 0 20px #00ff00,
+                inset 0 0 20px rgba(0, 255, 0, 0.3);
+            background: #000;
+            margin: 20px;
+            position: relative;
+        }
+
+        #retroCanvas {
+            display: block;
+            background: #000;
+        }
+
+        .control-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 15px #00ff00;
+            z-index: 20;
+        }
+
+        .control-title {
+            color: #00ff00;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            text-align: center;
+            text-shadow: 0 0 5px #00ff00;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-label {
+            color: #00cc00;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .retro-button {
+            background: #000;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            padding: 8px 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin: 2px;
+            border-radius: 5px;
+            transition: all 0.2s ease;
+            text-shadow: 0 0 5px #00ff00;
+            position: relative;
+            overflow: hidden;
+            animation: buttonGlow 3s ease-in-out infinite;
+        }
+
+        .retro-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.4), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .retro-button:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 
+                0 0 15px #00ff00,
+                0 0 30px #00ff00,
+                inset 0 0 10px rgba(0, 255, 0, 0.3);
+            transform: scale(1.05);
+            animation: buttonPulse 0.5s ease-in-out;
+        }
+
+        .retro-button:hover::before {
+            left: 100%;
+        }
+
+        .retro-button:active {
+            transform: scale(0.95);
+            box-shadow: 
+                0 0 20px #00ff00,
+                inset 0 0 15px rgba(0, 255, 0, 0.5);
+        }
+
+        @keyframes buttonGlow {
+            0%, 100% { 
+                box-shadow: 0 0 5px #00ff00;
+                text-shadow: 0 0 5px #00ff00;
+            }
+            50% { 
+                box-shadow: 0 0 15px #00ff00;
+                text-shadow: 0 0 10px #00ff00;
+            }
+        }
+
+        @keyframes buttonPulse {
+            0% { transform: scale(1.05); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1.05); }
+        }
+
+        .retro-button.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            animation: none;
+        }
+
+        .retro-button.disabled:hover {
+            transform: none;
+            box-shadow: 0 0 5px #00ff00;
+        }
+
+        .retro-select {
+            background: #000;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            padding: 5px 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        .retro-select option {
+            background: #000;
+            color: #00ff00;
+        }
+
+        .status-display {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 0 15px #00ff00;
+            z-index: 20;
+        }
+
+        .status-text {
+            color: #00ff00;
+            font-size: 0.9rem;
+            text-shadow: 0 0 5px #00ff00;
+        }
+
+        .particle-count {
+            color: #00cc00;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        /* Matrix rain effect */
+        .matrix-rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .matrix-character {
+            position: absolute;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            text-shadow: 0 0 5px #00ff00;
+            animation: matrix-fall linear infinite;
+        }
+
+        @keyframes matrix-fall {
+            to { transform: translateY(100vh); }
+        }
+
+        /* Retro loading animation */
+        .loading-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #00ff00;
+            font-size: 2rem;
+            text-shadow: 0 0 10px #00ff00;
+            z-index: 30;
+            animation: loading-pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes loading-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.5rem;
+                letter-spacing: 4px;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .control-panel {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin: 20px;
+                width: calc(100% - 40px);
+            }
+            
+            .status-display {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                margin: 20px;
+                width: calc(100% - 40px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Matrix rain background -->
+        <div class="matrix-rain" id="matrixRain"></div>
+        
+        <!-- Loading screen -->
+        <div class="loading-text" id="loadingText">INITIALIZING ANIMAGENT...</div>
+        
+        <!-- Main content -->
+        <div class="title-section">
+            <h1 class="main-title">ANIMAGENT</h1>
+            <p class="subtitle">EPIC RETRO ANIMATION STUDIO</p>
+            <p class="tagline">"Where Pixels Come to Life"</p>
+        </div>
+        
+        <div class="animation-canvas">
+            <canvas id="retroCanvas"></canvas>
+        </div>
+        
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="control-title">CONTROL CENTER</div>
+            
+            <div class="control-group">
+                <label class="control-label">ANIMATION CONTROLS:</label>
+                <button class="retro-button" onclick="addParticle()">ADD PARTICLE</button>
+                <button class="retro-button" onclick="removeParticle()">REMOVE PARTICLE</button>
+            </div>
+            
+            <div class="control-group">
+                <button class="retro-button" onclick="toggleAnimation()" id="pauseBtn">PAUSE</button>
+                <button class="retro-button" onclick="resetAnimation()">RESET</button>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">PARTICLE COLOR:</label>
+                <select class="retro-select" id="particleColor">
+                    <option value="random">RANDOM</option>
+                    <option value="green">GREEN</option>
+                    <option value="cyan">CYAN</option>
+                    <option value="yellow">YELLOW</option>
+                    <option value="magenta">MAGENTA</option>
+                    <option value="white">WHITE</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Status Display -->
+        <div class="status-display">
+            <div class="status-text">SYSTEM STATUS: ONLINE</div>
+            <div class="particle-count" id="particleCount">PARTICLES: 0</div>
+            <div class="status-text">FPS: <span id="fpsDisplay">60</span></div>
+        </div>
+    </div>
+
+    <script src="animation.js"></script>
+    <script>
+        // Matrix rain effect
+        function createMatrixRain() {
+            const matrixRain = document.getElementById('matrixRain');
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
+            
+            for (let i = 0; i < 50; i++) {
+                const char = document.createElement('div');
+                char.className = 'matrix-character';
+                char.textContent = characters[Math.floor(Math.random() * characters.length)];
+                char.style.left = Math.random() * 100 + '%';
+                char.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                char.style.animationDelay = Math.random() * 2 + 's';
+                matrixRain.appendChild(char);
+            }
+        }
+
+        // Loading screen
+        function hideLoading() {
+            setTimeout(() => {
+                document.getElementById('loadingText').style.display = 'none';
+            }, 2000);
+        }
+
+        // FPS counter
+        let frameCount = 0;
+        let lastTime = performance.now();
+        
+        function updateFPS() {
+            frameCount++;
+            const currentTime = performance.now();
+            
+            if (currentTime - lastTime >= 1000) {
+                const fps = Math.round((frameCount * 1000) / (currentTime - lastTime));
+                document.getElementById('fpsDisplay').textContent = fps;
+                frameCount = 0;
+                lastTime = currentTime;
+            }
+            
+            requestAnimationFrame(updateFPS);
+        }
+
+        // Button click effects
+        function createButtonEffect(button) {
+            // Create ripple effect
+            const ripple = document.createElement('div');
+            ripple.style.position = 'absolute';
+            ripple.style.borderRadius = '50%';
+            ripple.style.background = 'rgba(0, 255, 0, 0.6)';
+            ripple.style.transform = 'scale(0)';
+            ripple.style.animation = 'ripple 0.6s linear';
+            ripple.style.left = '50%';
+            ripple.style.top = '50%';
+            ripple.style.width = '20px';
+            ripple.style.height = '20px';
+            ripple.style.marginLeft = '-10px';
+            ripple.style.marginTop = '-10px';
+            ripple.style.pointerEvents = 'none';
+            
+            button.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        }
+
+        // Add ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Add click handlers to all buttons
+        function addButtonEffects() {
+            const buttons = document.querySelectorAll('.retro-button');
+            buttons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    createButtonEffect(button);
+                    
+                    // Add visual feedback
+                    button.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        button.style.transform = '';
+                    }, 150);
+                });
+            });
+        }
+
+        // Initialize everything
+        window.addEventListener('load', () => {
+            createMatrixRain();
+            hideLoading();
+            updateFPS();
+            addButtonEffects();
+        });
+    </script>
+</body>
+</html> 
