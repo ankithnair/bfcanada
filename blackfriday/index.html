@@ -4,6 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Black Friday Brand Board</title>
+<meta name="description" content="Canadian Black Friday 2026 deals, brand by brand: discount depth, dates, promo codes and real prices on flagship products. Updated twice a day through Cyber Monday.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Black Friday in Canada, brand by brand">
+<meta property="og:description" content="180 brands on one page: how big each discount is, when it ends, codes and real prices. Updated twice a day through Cyber Monday.">
+<meta property="og:url" content="https://ankithnair.github.io/2FILES/blackfriday/">
+<meta property="og:image" content="https://ankithnair.github.io/2FILES/blackfriday/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#e4002b">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23e4002b'/%3E%3Ctext x='32' y='44' font-family='Arial' font-weight='900' font-size='30' text-anchor='middle' fill='white'%3E%25%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" rel="stylesheet">
@@ -25,6 +36,11 @@ header{border-top:10px solid var(--ink);padding-top:clamp(20px,3vw,40px);padding
 h1{font-size:clamp(32px,4.6vw,52px);line-height:1.05;letter-spacing:-.02em;font-weight:800;font-stretch:112%;margin:0 0 10px;text-wrap:balance;max-width:16ch}
 .lede{color:var(--grey);margin:0;max-width:62ch}
 .upd{margin:12px 0 0;font-size:14px;font-weight:600}
+.trust{margin:4px 0 0;font-size:14px;color:var(--grey)}
+footer{border-top:1px solid var(--rule);padding-block:20px 36px;font-size:13px;color:var(--grey)}
+footer p{margin:0 0 6px;max-width:90ch}
+details.nd summary{cursor:pointer;font-weight:700;font-size:16px;min-height:44px;display:flex;align-items:center;color:var(--ink)}
+details.nd[open] summary{margin-bottom:12px}
 .upd b{color:var(--red)}
 .top{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px;align-items:end}
 .counts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:2px solid var(--ink)}
@@ -109,6 +125,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
       <h1>Black Friday in Canada, brand by brand</h1>
       <p class="lede">Every brand's deal on one board: how deep it goes, whether it's sitewide, when it ends, and a few flagship products with real prices. Pick the brands worth your time, then shop them directly.</p>
       <p class="upd" id="upd"></p>
+      <p class="trust">Independent and not sponsored. No affiliate links. Every deal is checked against Canadian sources, linked on its row.</p>
     </div>
     <div class="counts" id="counts"></div>
   </div>
@@ -137,7 +154,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
   <section class="none" id="none">
     <h3 id="noneh">No Canadian deal found yet</h3>
     <p>These brands are at the mall or on our watch list, but no 2026 Canadian Black Friday offer had been published by a source I could check as of Nov 25. Some will launch on Friday; luxury houses usually don't discount at all. US offers aren't used here because they often differ from Canadian ones.</p>
-    <ul id="nolist"></ul>
+    <details class="nd"><summary id="ndsum">Show the list</summary><ul id="nolist"></ul></details>
   </section>
   <section class="how">
     <div>
@@ -156,11 +173,12 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     </div>
   </section>
 </main>
+<footer class="band"><p>Not affiliated with, endorsed by or sponsored by any brand or retailer listed. Brand names are trademarks of their owners.</p><p>Prices, stock and offer terms change quickly during Black Friday and can differ in store. Always confirm on the retailer's site before you buy.</p></footer>
 
 <script>
 {
 const MALL="";
-const UPDATED="Nov 25, 2026, 11:50 AM ET";
+const UPDATED="Nov 25, 2026, 12:15 PM ET";
 const S={
  CF:["canadafun.ca","https://canadafun.ca/sales/online-sales/black-friday-sales-canada-2026","Nov 23"],
  CQ:["Canooq","https://www.canooq.ca/blog/black-friday-deals-canada-2026","Nov 19"],
@@ -236,7 +254,7 @@ const B=[
 {n:"Bluenotes",c:["fashion"],sub:"clothing",m:1,ca:1,d:{t:"pct",v:60},sc:"select",h:"Pre-Black Friday sale, up to 60% off.",pk:[],src:["SC3"]},
 {n:"OAK + FORT",c:["fashion"],sub:"clothing",m:1,ca:1,d:{t:"pct",v:69},sc:"select",h:"Black Friday markdowns on outerwear and basics.",pk:[["Oversized trench coat",136,188],["Twill wide leg pant",24,78]],src:["BFO"]},
 {n:"Under Armour",c:["fashion"],sub:"clothing",d:{t:"pct",v:40},sc:"sitewide",h:"30% off regular-price styles and 40% off outlet, sitewide with a code. Free shipping on $75+.",e:"2026-11-29",code:[["BLACKFRIDAY","30 to 40% off"]],pk:[],src:["CF","YH"]},
-{n:"The North Face",c:["fashion"],sub:"clothing",d:{t:"pct",v:40},sc:"select",h:"Sale styles up to 40% off, plus 35% off regular price when you spend $250.",pk:[],src:["SC"]},
+{n:"The North Face",c:["fashion"],sub:"clothing",d:{t:"pct",v:40},sc:"select",h:"Sale styles up to 40% off, plus 35% off regular price when you spend $250. Early access: 30% off holiday exclusives.",pk:[["Men's Terra Peak Vest",53,75]],src:["SC"]},
 {n:"MEC",c:["fashion"],sub:"clothing",ca:1,ret:1,d:{t:"pct",v:40},sc:"select",h:"Up to 40% off outdoor gear, up to 25% off select insulated jackets and shells, up to $350 off select Garmin watches.",pk:[["Arc'teryx Thorium AR Hoody, women's",480,600],["Arc'teryx Cormac short sleeve, men's",70,100]],tip:"Arc'teryx doesn't run its own Black Friday sale; MEC and Altitude Sports discount it.",src:["YH","MC"]},
 {n:"Knix",c:["fashion"],sub:"clothing",m:1,ca:1,d:{t:"pct",v:50},sc:"sitewide",h:"Up to 50% off everything.",pk:[["Classic Cotton PJ Set",60,120],["Super Leakproof High Rise",28.8,36]],src:["YH","GN","BFO"]},
 {n:"Kit and Ace",c:["fashion"],sub:"clothing",ca:1,d:{t:"pct",v:45},sc:"select",h:"Up to 45% off select pants and knitwear.",pk:[["Seymour Classic Ankle Pants",99,180],["Nord Merino Argyle Vest",96,160]],src:["CQ","BFO"]},
@@ -367,7 +385,7 @@ function row(b){const[t,cls]=status(b);const id=b.n;
  <div class="meta"><span class="st ${cls}">${t}</span>${dates?`<span>${dates}</span>`:""}<span>${b.c.map(c=>c[0].toUpperCase()+c.slice(1)).join(", ")}</span></div>
  ${codes?`<div class="codes">${codes}</div>`:""}
  ${b.tip?`<p class="tip">${esc(b.tip)}</p>`:""}</div>
- <div class="side">${b.pk.length?`<ul class="picks">${b.pk.map(pick).join("")}</ul>`:`<p class="src">No flagship prices published yet. Check the brand's site.</p>`}
+ <div class="side">${b.pk.length?`<ul class="picks">${b.pk.map(pick).join("")}</ul>`:""}
  <a class="shop" href="${esc(shopUrl(b.n))}" target="_blank" rel="noopener">${U[b.n]?"Shop "+esc(b.n):"Find "+esc(b.n)+" deals"} →</a>
  <button class="star" data-star="${esc(id)}" aria-pressed="${stars.has(id)}">${stars.has(id)?"On shortlist":"Add to shortlist"}</button>
  <p class="src">Checked via ${srcs}</p></div></li>`;
@@ -402,6 +420,7 @@ function render(){
  const nl=noneList();
  $("none").hidden=!nl.length;
  $("noneh").textContent=`No Canadian deal found yet (${nl.length})`;
+ $("ndsum").textContent=`Show all ${nl.length} brands`;
  $("nolist").innerHTML=nl.map(([n,,,note])=>`<li><b>${esc(n)}</b>${note?`<span>${esc(note)}</span>`:""}</li>`).join("");
  const live=B.filter(b=>{const s=status(b)[0];return!s.startsWith("Ended")&&!s.startsWith("Starts")}).length;
  const act=B.filter(b=>!ended(b));const mall=act.filter(b=>b.m).length;
