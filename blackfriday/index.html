@@ -75,6 +75,11 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .picks .w{grid-column:1/-1;font-size:13px;color:var(--grey)}
 .picks .pc{color:var(--red)}
 .side{display:flex;flex-direction:column;gap:8px}
+.shop{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:8px;background:var(--red);color:#fff;font-weight:700;text-decoration:none;align-self:flex-start}
+.shop:hover{filter:brightness(1.08)}
+.shop:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.name h2 a{color:inherit;text-decoration:none}
+.name h2 a:hover{text-decoration:underline}
 .star{align-self:flex-start;font:600 14px Archivo,sans-serif;min-height:44px;padding:0 12px;border:1.5px solid var(--rule);border-radius:8px;background:transparent;color:var(--ink);cursor:pointer}
 .star[aria-pressed=true]{border-color:var(--red);color:var(--red)}
 .src{font-size:13px;color:var(--grey);margin:0}
@@ -155,7 +160,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 <script>
 {
 const MALL="";
-const UPDATED="Nov 25, 2026, 10:00 AM ET";
+const UPDATED="Nov 25, 2026, 11:50 AM ET";
 const S={
  CF:["canadafun.ca","https://canadafun.ca/sales/online-sales/black-friday-sales-canada-2026","Nov 23"],
  CQ:["Canooq","https://www.canooq.ca/blog/black-friday-deals-canada-2026","Nov 19"],
@@ -316,6 +321,8 @@ const N=[
 ["Mobile Care","tech"],["Mobile Klinik","tech"],["Mobile Snap","tech"],["Showcase","tech"],["Tbooth Wireless","tech"],["Wirelesswave","tech"],["WOW! Mobile Boutique","tech"],
 ["Flying Tiger Copenhagen","home"],["QE Home","home"],["Super Miniso","home"]
 ];
+const U={"lululemon": "https://shop.lululemon.com/en-ca/", "Aritzia": "https://www.aritzia.com/en/home", "Roots": "https://www.roots.com/ca/en/home", "American Eagle, Aerie & OFFLINE": "https://www.ae.com/ca/en", "Alo Yoga": "https://www.aloyoga.com/", "Banana Republic": "https://bananarepublic.gapcanada.ca/", "Club Monaco": "https://www.clubmonaco.ca/", "Old Navy": "https://oldnavy.gapcanada.ca/", "Gap": "https://www.gapcanada.ca/", "Lacoste": "https://www.lacoste.com/ca/en/", "Mango": "https://shop.mango.com/ca", "Uniqlo": "https://www.uniqlo.com/ca/en/", "Nike": "https://www.nike.com/ca/", "Mountain Warehouse": "https://www.mountainwarehouse.com/ca/", "Columbia": "https://www.columbiasportswear.ca/", "Harry Rosen": "https://www.harryrosen.com/", "RW&CO": "https://www.rw-co.com/", "OAK + FORT": "https://oakandfort.com/", "Under Armour": "https://www.underarmour.ca/", "The North Face": "https://www.thenorthface.com/en-ca", "MEC": "https://www.mec.ca/", "Knix": "https://knix.com/", "Kit and Ace": "https://www.kitandace.com/", "Adidas": "https://www.adidas.ca/", "Sport Chek": "https://www.sportchek.ca/", "JD Sports": "https://jdsports.ca/", "SoftMoc": "https://www.softmoc.com/ca", "Vessi": "https://vessi.com/", "ALDO": "https://www.aldoshoes.com/ca/en", "Michael Kors": "https://www.michaelkors.ca/", "Coach Outlet": "https://ca.coachoutlet.com/", "Kate Spade": "https://ca.katespade.com/en", "Tory Burch": "https://www.toryburch.com/", "Mejuri": "https://mejuri.com/", "Pandora": "https://ca.pandora.net/en/", "Swarovski": "https://www.swarovski.com/en_GB-CA/", "Michael Hill": "https://www.michaelhill.ca/", "Peoples Jewellers": "https://www.peoplesjewellers.com/", "Clearly": "https://www.clearly.ca/", "BonLook": "https://www.bonlook.ca/", "Simons": "https://www.simons.ca/en", "Altitude Sports": "https://www.altitude-sports.com/", "Apple": "https://www.apple.com/ca/", "Samsung": "https://www.samsung.com/ca/offer/black-friday", "Best Buy": "https://www.bestbuy.ca/", "EB Games": "https://www.ebgames.ca/", "Bell": "https://www.bell.ca/", "Rogers": "https://www.rogers.com/", "Telus": "https://www.telus.com/", "Koodo": "https://www.koodomobile.com/", "Fido": "https://www.fido.ca/", "Virgin Plus": "https://www.virginplus.ca/", "Freedom Mobile": "https://www.freedommobile.ca/", "Chatr": "https://www.chatrwireless.com/", "Google": "https://store.google.com/ca/", "Amazon.ca": "https://www.amazon.ca/", "Staples": "https://www.staples.ca/", "Walmart": "https://www.walmart.ca/", "Canadian Tire": "https://www.canadiantire.ca/", "Costco": "https://www.costco.ca/", "Sephora": "https://www.sephora.com/ca/en/", "Saje": "https://www.saje.com/", "The Ordinary": "https://theordinary.com/en-ca/", "L'Occitane": "https://ca.loccitane.com/", "Bath & Body Works": "https://www.bathandbodyworks.ca/", "The Body Shop": "https://www.thebodyshop.com/en-ca/", "Shoppers Drug Mart": "https://shop.shoppersdrugmart.ca/", "Dyson": "https://www.dyson.ca/", "Lancôme": "https://www.lancome.ca/", "Nespresso": "https://www.nespresso.com/ca/en/", "Article": "https://www.article.com/", "Silk & Snow": "https://www.silkandsnow.com/", "Sleep Country": "https://www.sleepcountry.ca/", "IKEA": "https://www.ikea.com/ca/en/", "Wayfair": "https://www.wayfair.ca/", "KitchenAid": "https://www.kitchenaid.ca/", "Indigo": "https://www.indigo.ca/", "Structube": "https://www.structube.com/"};
+const shopUrl=n=>U[n]||"https://www.google.com/search?q="+encodeURIComponent(n+" Black Friday Canada");
 const CATS=[["all","All"],["fashion","Fashion"],["tech","Tech"],["beauty","Beauty"],["home","Home"]];
 const SUBS=[["all","All fashion"],["clothing","Clothing"],["shoes","Shoes"],["acc","Bags & jewellery"],["eyewear","Eyewear"]];
 const esc=x=>String(x).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
@@ -355,12 +362,13 @@ function row(b){const[t,cls]=status(b);const id=b.n;
  const codes=(b.code||[]).map(([c,w])=>`<button class="copy" data-code="${esc(c)}" aria-label="Copy code ${esc(c)}">${esc(c)}<span>${esc(w)}</span></button>`).join("");
  const srcs=b.src.map(k=>`<a href="${S[k][1]}" target="_blank" rel="noopener">${esc(S[k][0])}</a> ${S[k][2]}`).join(", ");
  return`<li class="row${cls==="off"?" ended":""}">${depth(b)}
- <div><div class="name"><h2>${esc(b.n)}</h2>${b.ca?'<span class="tag ca">Canadian</span>':""}${b.ret?'<span class="tag">Retailer</span>':""}${b.m?`<span class="tag">At ${esc(MALL||"the mall")}</span>`:""}<span class="tag">${scope}</span></div>
+ <div><div class="name"><h2><a href="${esc(shopUrl(b.n))}" target="_blank" rel="noopener">${esc(b.n)}</a></h2>${b.ca?'<span class="tag ca">Canadian</span>':""}${b.ret?'<span class="tag">Retailer</span>':""}${b.m?`<span class="tag">At ${esc(MALL||"the mall")}</span>`:""}<span class="tag">${scope}</span></div>
  <p class="deal">${esc(b.h)}</p>
  <div class="meta"><span class="st ${cls}">${t}</span>${dates?`<span>${dates}</span>`:""}<span>${b.c.map(c=>c[0].toUpperCase()+c.slice(1)).join(", ")}</span></div>
  ${codes?`<div class="codes">${codes}</div>`:""}
  ${b.tip?`<p class="tip">${esc(b.tip)}</p>`:""}</div>
  <div class="side">${b.pk.length?`<ul class="picks">${b.pk.map(pick).join("")}</ul>`:`<p class="src">No flagship prices published yet. Check the brand's site.</p>`}
+ <a class="shop" href="${esc(shopUrl(b.n))}" target="_blank" rel="noopener">${U[b.n]?"Shop "+esc(b.n):"Find "+esc(b.n)+" deals"} →</a>
  <button class="star" data-star="${esc(id)}" aria-pressed="${stars.has(id)}">${stars.has(id)?"On shortlist":"Add to shortlist"}</button>
  <p class="src">Checked via ${srcs}</p></div></li>`;
 }
