@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Black Friday Brand Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" rel="stylesheet">
+<style>
+/* VOICE work tool for shoppers: dense, ordered, scannable like a departures board
+   IDEA a transit timetable where each brand is a departure and the discount is the big hanging number
+   PICTURE the board itself: rows of brands, huge red discount numerals hanging in the left column
+   COLOUR white ground, black ink, signal red for discount depth, one grey; night #0e0e0e
+   TYPE Archivo wide 800 for numerals and titles, Archivo 400 for text
+   LAYOUT title and four counts across the top, filter bar, then the board, then brands with no deal yet; phone stacks numeral beside brand, picks beneath */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#0e0e0e);--ink:light-dark(#111111,#f2f2f2);--red:light-dark(#e4002b,#ff3b55);--grey:light-dark(#6b6b6b,#a3a3a3);--rule:light-dark(#d9d9d9,#2c2c2c);--panel:light-dark(#f4f4f4,#181818);--chip:light-dark(#111,#f2f2f2);--chipink:light-dark(#fff,#0e0e0e)}
+:root[data-theme=light]{color-scheme:light}
+:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:160px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Archivo,system-ui,sans-serif;overflow-x:clip}
+.band{padding-inline:max(5vw,16px);max-width:1340px;margin-inline:auto}
+header{border-top:10px solid var(--ink);padding-top:clamp(20px,3vw,40px);padding-bottom:18px}
+h1{font-size:clamp(32px,4.6vw,52px);line-height:1.05;letter-spacing:-.02em;font-weight:800;font-stretch:112%;margin:0 0 10px;text-wrap:balance;max-width:16ch}
+.lede{color:var(--grey);margin:0;max-width:62ch}
+.upd{margin:12px 0 0;font-size:14px;font-weight:600}
+.upd b{color:var(--red)}
+.top{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px;align-items:end}
+.counts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:2px solid var(--ink)}
+.counts div{padding:10px 10px 0 0}
+.counts b{display:block;font-size:clamp(28px,3.4vw,40px);font-weight:800;font-stretch:112%;line-height:1;font-variant-numeric:tabular-nums}
+.counts span{font-size:13px;color:var(--grey)}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:2px solid var(--ink);padding-block:12px;display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs button,.tog{font:600 15px Archivo,sans-serif;min-height:44px;padding:0 14px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);border-radius:999px;cursor:pointer}
+.tabs button[aria-pressed=true],.tog[aria-pressed=true]{background:var(--chip);color:var(--chipink)}
+.subs{display:flex;flex-wrap:wrap;gap:6px;width:100%}
+.subs[hidden]{display:none}
+.subs button{font:600 14px Archivo,sans-serif;min-height:38px;padding:0 12px;border:1.5px solid var(--rule);background:transparent;color:var(--ink);border-radius:999px;cursor:pointer}
+.subs button[aria-pressed=true]{border-color:var(--red);color:var(--red)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.tabs small,.subs small{font-weight:400;opacity:.7;margin-left:4px}
+#q{font:16px Archivo,sans-serif;min-height:44px;padding:0 12px;border:1.5px solid var(--ink);border-radius:8px;background:var(--bg);color:var(--ink);width:min(100%,220px)}
+#sort{font:16px Archivo,sans-serif;min-height:44px;padding:0 10px;border:1.5px solid var(--ink);border-radius:8px;background:var(--bg);color:var(--ink)}
+.grow{flex:1 1 0}
+#board{list-style:none;margin:0;padding:0}
+.row{display:grid;grid-template-columns:8.2em minmax(0,1.15fr) minmax(0,1fr);gap:20px;padding-block:20px;border-bottom:1px solid var(--rule);align-items:start}
+.num{color:var(--red);font-weight:800;font-stretch:112%;line-height:.95;font-size:clamp(34px,4vw,50px);letter-spacing:-.03em;white-space:nowrap;font-variant-numeric:tabular-nums}
+.num small{display:block;font-size:13px;letter-spacing:0;font-weight:600;color:var(--grey);font-stretch:100%;line-height:1.3;margin-bottom:2px;white-space:normal}
+.num.soft{color:var(--ink)}
+.num.txt{font-size:clamp(22px,2.4vw,28px);white-space:normal;line-height:1.05}
+.name{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.name h2{font-size:24px;line-height:1.1;font-weight:800;font-stretch:108%;margin:0;letter-spacing:-.01em}
+.tag{font-size:13px;font-weight:600;padding:2px 8px;border-radius:4px;background:var(--panel);white-space:nowrap}
+.tag.ca{background:var(--red);color:#fff}
+.deal{margin:8px 0 10px;font-size:17px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;color:var(--grey);align-items:center}
+.meta .st{font-weight:700;color:var(--ink)}
+.meta .st.hot{color:var(--red)}
+.meta .st.off{text-decoration:line-through;color:var(--grey)}
+.codes{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.copy{font:700 14px Archivo,sans-serif;min-height:36px;padding:0 10px;border:1.5px dashed var(--ink);border-radius:6px;background:transparent;color:var(--ink);cursor:pointer;letter-spacing:.02em}
+.copy span{font-weight:400;color:var(--grey);margin-left:6px;letter-spacing:0}
+.tip{font-size:14px;margin:10px 0 0;padding-left:10px;border-left:3px solid var(--rule)}
+.picks{list-style:none;margin:0;padding:0;border-top:2px solid var(--ink)}
+.picks li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:8px 0;border-bottom:1px solid var(--rule);font-size:15px}
+.picks .p{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:700}
+.picks .p s{font-weight:400;color:var(--grey);margin-right:6px}
+.picks .w{grid-column:1/-1;font-size:13px;color:var(--grey)}
+.picks .pc{color:var(--red)}
+.side{display:flex;flex-direction:column;gap:8px}
+.star{align-self:flex-start;font:600 14px Archivo,sans-serif;min-height:44px;padding:0 12px;border:1.5px solid var(--rule);border-radius:8px;background:transparent;color:var(--ink);cursor:pointer}
+.star[aria-pressed=true]{border-color:var(--red);color:var(--red)}
+.src{font-size:13px;color:var(--grey);margin:0}
+.src a{color:inherit}
+.empty{padding:48px 0;font-size:18px;color:var(--grey)}
+.none{padding-block:36px 8px}
+.none h3{font-size:26px;font-weight:800;font-stretch:108%;margin:0 0 6px;letter-spacing:-.01em}
+.none>p{color:var(--grey);margin:0 0 16px;max-width:70ch}
+#nolist{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));border-top:2px solid var(--ink)}
+#nolist li{padding:10px 12px 10px 0;border-bottom:1px solid var(--rule)}
+#nolist b{display:block;font-size:16px}
+#nolist span{font-size:13px;color:var(--grey)}
+.how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;padding-block:40px 56px;border-top:10px solid var(--ink);margin-top:40px}
+.how h3{font-size:20px;font-weight:800;font-stretch:108%;margin:0 0 8px}
+.how p,.how li{font-size:15px;color:var(--grey);margin:0 0 8px}
+.how ul{padding-left:18px;margin:0}
+.how a{color:var(--ink)}
+@media(max-width:900px){.top{grid-template-columns:1fr}.row{grid-template-columns:6.6em minmax(0,1fr)}.row .side{grid-column:2}.bar{position:static}.how{grid-template-columns:1fr}}
+@media(max-width:600px){.row{grid-template-columns:5.2em minmax(0,1fr);gap:12px}.num{font-size:32px}.num.txt{font-size:19px}.name h2{font-size:21px}.counts{grid-template-columns:repeat(2,minmax(0,1fr))}#q{width:100%}.grow{display:none}#nolist{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(prefers-reduced-motion:no-preference){.row{animation:in .35s ease both}@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}}
+</style>
+</head>
+<body>
+<header class="band">
+  <div class="top">
+    <div>
+      <h1>Black Friday in Canada, brand by brand</h1>
+      <p class="lede">Every brand's deal on one board: how deep it goes, whether it's sitewide, when it ends, and a few flagship products with real prices. Pick the brands worth your time, then shop them directly.</p>
+      <p class="upd" id="upd"></p>
+    </div>
+    <div class="counts" id="counts"></div>
+  </div>
+</header>
+
+<nav class="band bar" aria-label="Filters">
+  <div class="tabs" id="tabs"></div>
+  <button class="tog" id="fMall" aria-pressed="false">At the mall</button>
+  <button class="tog" id="fCA" aria-pressed="false">Canadian brands</button>
+  <button class="tog" id="fSite" aria-pressed="false">Sitewide only</button>
+  <button class="tog" id="fCode" aria-pressed="false">Has a code</button>
+  <button class="tog" id="fStar" aria-pressed="false">Shortlist (0)</button>
+  <span class="grow"></span>
+  <input id="q" type="search" placeholder="Search brand or product" aria-label="Search brand or product">
+  <select id="sort" aria-label="Sort">
+    <option value="depth">Biggest discount</option>
+    <option value="end">Ending soonest</option>
+    <option value="az">A to Z</option>
+  </select>
+  <div class="subs" id="subs" hidden></div>
+</nav>
+
+<main class="band">
+  <ol id="board"></ol>
+  <section class="none" id="none">
+    <h3 id="noneh">No Canadian deal found yet</h3>
+    <p>These brands are at the mall, but no 2026 Canadian Black Friday offer had been published by a source I could check as of Nov 25. Some will launch on Friday; luxury houses usually don't discount at all. US offers aren't used here because they often differ from Canadian ones.</p>
+    <ul id="nolist"></ul>
+  </section>
+  <section class="how">
+    <div>
+      <h3>How to read the board</h3>
+      <p>The big number is the deepest discount the brand advertises. "Up to 60%" usually means a few items hit 60%; the flagship picks show what you'd actually pay for the products people want.</p>
+      <p>"Select" means only some items are on sale. "Sitewide" means nearly everything is. Carriers show the headline phone or plan price instead of a percentage.</p>
+    </div>
+    <div>
+      <h3>What's checked, what isn't</h3>
+      <p>The board is refreshed about twice a day through Cyber Monday (around 7 AM and 6 PM ET): new deals are added, ended ones are marked. Each row links the Canadian sources it was checked against. Product prices are a snapshot from the last check, not live. Stock and prices move hourly during Cyber Week, so confirm on the brand's site before you buy.</p>
+      <p>Apple gives a gift card for a later purchase, not money off. Carrier phone prices assume an eligible plan, credit approval and often returning the phone after 24 months.</p>
+    </div>
+    <div>
+      <h3>Sources</h3>
+      <ul id="srcs"></ul>
+    </div>
+  </section>
+</main>
+
+<script>
+{
+const UPDATED="Nov 25, 2026, 9:45 AM ET";
+const S={
+ CF:["canadafun.ca","https://canadafun.ca/sales/online-sales/black-friday-sales-canada-2026","Nov 23"],
+ CQ:["Canooq","https://www.canooq.ca/blog/black-friday-deals-canada-2026","Nov 19"],
+ YH:["Yahoo Style Canada","https://ca.style.yahoo.com/ive-tracked-the-best-black-friday-2026-sales-for-3-weeks--here-are-the-100-biggest-deals-in-canada-205803097.html","Nov 25"],
+ YE:["Yahoo Style Canada (early deals)","https://ca.style.yahoo.com/i-found-the-best-early-black-friday-deals-in-canada-on-dyson-vacuums-uggs-samsonite-luggage-and-more-195125556.html","Nov 11"],
+ GN:["Global News","https://globalnews.ca/the-curator/12161853/best-black-friday-cyber-monday-deals-canada-2026/","Nov 24"],
+ GF:["Global News fashion","https://globalnews.ca/news/12161680/best-black-friday-fashion-deals-in-canada-2026/","Nov 25"],
+ AP:["iPhone in Canada (Apple)","https://www.iphoneincanada.ca/2026/11/19/apple-black-friday-canada-2026/","Nov 19"],
+ GO:["MobileSyrup (Google)","https://mobilesyrup.com/2026/11/18/google-black-friday-sale-2026/","Nov 18"],
+ LU:["PageCrawl","https://pagecrawl.io/blog/lululemon-black-friday-deal-alerts","Nov 17"],
+ MC:["MEC","https://www.mec.ca/products/brands/arcteryx/deals","Nov 25"],
+ SA:["Samsung Canada","https://www.samsung.com/ca/offer/black-friday","Nov 25"],
+ SC:["SmartCanucks","https://smartcanucks.ca/","Nov 25"],
+ SC2:["SmartCanucks p.2","https://smartcanucks.ca/page/2/","Nov 24"],
+ SC3:["SmartCanucks p.3","https://smartcanucks.ca/page/3/","Nov 18"],
+ SC5:["SmartCanucks p.5","https://smartcanucks.ca/page/5/","Nov 21"],
+ SCae:["SmartCanucks (AE)","https://smartcanucks.ca/american-eagle-aerie-canada-black-friday-deals-2026-save-40-off-everything-sitewide/","Nov 22"],
+ SCalo:["SmartCanucks (Alo)","https://smartcanucks.ca/alo-yoga-canada-black-friday-sale-deals-2026-live-save-30-off-everything-sitewide/","Nov 25"],
+ SCbr:["SmartCanucks (Banana Republic)","https://smartcanucks.ca/banana-republic-canada-black-friday-deals-sale-2026-live-40-off-full-priced-items-including-cashmere/","Nov 24"],
+ SCcm:["SmartCanucks (Club Monaco)","https://smartcanucks.ca/club-monaco-canada-black-friday-sale-2026-live-save-30-off-everything-sitewide/","Nov 23"],
+ SCon:["SmartCanucks (Old Navy)","https://smartcanucks.ca/old-navy-canada-black-friday-sale-deals-2026-live-50-off-everything-clearance-up-to-86-off-more/","Nov 24"],
+ SClac:["SmartCanucks (Lacoste)","https://smartcanucks.ca/lacoste-canada-black-friday-sale-deals-2026-live-save-up-to-40-off-select-styles/","Nov 24"],
+ SCmw:["SmartCanucks (Mountain Warehouse)","https://smartcanucks.ca/mountain-warehouse-canada-black-friday-deals-2026-live-50-or-more-off-everything/","Nov 22"],
+ SCco:["SmartCanucks (Coach Outlet)","https://smartcanucks.ca/coach-outlet-canada-black-friday-deals-sale-2026-save-up-to-60-off/","Nov 18"],
+ SCloc:["SmartCanucks (L'Occitane)","https://smartcanucks.ca/loccitane-canada-black-friday-sale-promo-code-2026-live-save-20-off-full-priced-products/","Nov 24"],
+ SCsaje:["SmartCanucks (Saje)","https://smartcanucks.ca/saje-canada-black-friday-sale-2026-live-save-up-to-40-off-everything-sitewide-more-deals/","Nov 23"],
+ SCsam:["SmartCanucks (Samsung)","https://smartcanucks.ca/samsung-canada-black-friday-sale-deals-2026-live/","Nov 21"],
+ SCseph:["SmartCanucks (Sephora)","https://smartcanucks.ca/sephora-canada-black-friday-2026-sale-cyber-week-deals-live/","Nov 25"],
+ SCbb:["SmartCanucks (Best Buy)","https://smartcanucks.ca/best-buy-canada-black-friday-sale-deals-2026-live/","Nov 21"],
+ SCcl:["SmartCanucks (Clearly)","https://smartcanucks.ca/clearly-canada-black-friday-deals-sale-2026-live/","Nov 21"],
+ BFO:["Black Friday Ottawa","https://www.blackfridayottawa.ca/","Nov 18"],
+ BCB:["BC Business","https://bcbusiness.ca/business/retail/bc-black-friday-deals-2026/","Nov 20"],
+ JD:["JD Sports Canada","https://jdsports.ca/collections/black-friday-sale","Nov 25"],
+ SM:["SoftMoc","https://www.softmoc.com/ca","Nov 25"],
+ BL:["BonLook","https://www.bonlook.ca/collections/black-friday","Nov 25"],
+ BN:["Bailey Nelson","https://baileynelson.com/pages/special-offers","Nov 25"],
+ KS:["Kate Spade Canada","https://ca.katespade.com/en","Nov 25"],
+ PJ:["Peoples Jewellers","https://www.peoplesjewellers.com/","Nov 25"],
+ MH:["Michael Hill Canada","https://www.michaelhill.ca/black-friday","Nov 25"],
+ PA:["Pandora Canada","https://ca.pandora.net/en/black-friday/love/","Nov 25"],
+ SW:["Swarovski Canada","https://www.swarovski.com/en_GB-CA/s-blackfriday","Nov 17"],
+ BM:["BargainMoose","https://www.bargainmoose.ca/black-friday/black-friday-canada-2026-deals-live-now-and-sales-starting-soon","Nov 23"],
+ LOB:["Layers of Beauty (Dynamite)","https://layersofbeauty.com/dynamite-black-friday/","Nov 25"],
+ PH:["Phia brand index","https://phia.com/editorials/black-friday-2026-every-brands-sale-tracked-collection-202611-1855111838a4646a","Nov 23"],
+ BV:["Bikini Village","https://www.bikinivillage.com/en/events/black-friday","Nov 25"],
+ ICb:["iPhone in Canada (Bell)","https://www.iphoneincanada.ca/2026/11/18/bell-virgin-plus-black-friday-2026/","Nov 18"],
+ ICt:["iPhone in Canada (Telus)","https://www.iphoneincanada.ca/2026/11/22/telus-buy-one-give-one-black-friday-2026/","Nov 22"],
+ ICf:["iPhone in Canada (Freedom)","https://www.iphoneincanada.ca/2026/11/17/freedom-mobile-black-friday-2026/","Nov 17"],
+ ICc:["iPhone in Canada (Chatr)","https://www.iphoneincanada.ca/2026/10/30/freedom-winback-30-200gb-black-friday/","Oct 30"],
+ RFD:["RedFlagDeals (phones)","https://www.redflagdeals.com/blog/the-best-black-friday-2026-cell-phone-deals-in-canada-whats-actually-worth-your-money","Nov 24"],
+ CQP:["Canooq (phones)","https://www.canooq.ca/blog/black-friday-phone-internet-2026","Nov 18"],
+ PHB:["PlanHub","https://www.planhub.ca/blog/en/black-friday-telco/","Nov 25"],
+ EB:["MobileSyrup (EB Games)","https://mobilesyrup.com/2026/11/19/eb-games-canada-black-friday-2026-deals/","Nov 19"]
+};
+// d: {t:pct|off|card|deal|txt, v, l, k}. sc: select|sitewide|members. s/e: ISO dates. sub: clothing|shoes|acc|eyewear. m: on the mall list. pk: [name, sale, regular, where, note]
+const B=[
+// Fashion: clothing
+{n:"lululemon",c:["fashion"],sub:"clothing",m:1,ca:1,d:{t:"pct",v:40},sc:"select",h:"Up to 40% off belt bags, apparel and accessories. Members got app-only early access from Nov 17.",s:"2026-11-17",pk:[["Convertible Ruched Crossbody",69,118],["Men's Daydrift Classic-Fit Pintuck Trouser",99,148]],tip:"Sale items are final sale, but members can return in store for gift card or exchange.",src:["YH","LU"]},
+{n:"Aritzia",al:"Babaton Wilfred",c:["fashion"],sub:"clothing",m:1,ca:1,d:{t:"pct",v:50},sc:"sitewide",h:"Up to 50% off everything sitewide. Super Puffs are included this year.",pk:[["Super Puff XtraShorty, cliMATTE",192.5,275],["Super Puff XtraShorty, Hi-Gloss",208.6,298],["Babaton Meraki merino cardigan",100.8,168]],tip:"Babaton and Wilfred are Aritzia's own labels, so they're in this sale. Items 50% off or more are final sale.",src:["SC","GF","GN"]},
+{n:"Roots",c:["fashion"],sub:"clothing",m:1,ca:1,d:{t:"pct",v:60},sc:"sitewide",h:"Up to 60% off almost everything, including leather goods.",pk:[["Original Cabin fleece",68,98],["Worldwide Pouch",20.99,48]],tip:"Some preview items are final sale.",src:["CF","CQ","BFO"]},
+{n:"American Eagle, Aerie & OFFLINE",al:"AE Aerie Offline",c:["fashion"],sub:"clothing",m:1,d:{t:"pct",v:40},sc:"sitewide",h:"40% off sitewide including jeans and new arrivals, flash deals like $20 tees and $45 hoodies, clearance up to 70% off. Free shipping on $100+.",pk:[["AE Catie Corset Mini Dress",31.98,79.95],["AE Low Rise Pull On Barrel Pant",31.98,79.95]],src:["SCae"]},
+{n:"Alo Yoga",c:["fashion"],sub:"clothing",m:1,d:{t:"pct",v:30},sc:"sitewide",h:"30% off sitewide, free shipping on all orders, returns extended to Jan 10.",pk:[["Sherpa Edge Bomber",194,278],["Accolade 1/4 Zip Pullover",124,178]],src:["SCalo"]},
+{n:"Banana Republic",c:["fashion"],sub:"clothing",m:1,d:{t:"pct",v:40},sc:"sitewide",h:"40% off full-priced items, cashmere included, plus clearance up to 70% off.",e:"2026-11-28",pk:[["Men's cashmere crew neck sweater",118.8,198],["Women's wool-cashmere wrap coat",400,800],["High-Rise Bootcut Jean",55,148]],src:["SCbr","YH"]},
+{n:"Club Monaco",c:["fashion"],sub:"clothing",m:1,d:{t:"pct",v:30},sc:"sitewide",h:"30% off regular-price styles sitewide, plus an extra 30% off sale markdowns. $10 flat shipping.",pk:[["Relaxed single-breasted crepe blazer",199,378],["Cross Strap Top",49,148]],tip:"Product prices shown are before the extra 30% comes off in the cart.",src:["SCcm"]},
+{n:"Old Navy",c:["fashion"],sub:"clothing",m:1,d:{t:"pct",v:50},sc:"sitewide",h:"50% off everything, daily deals like $13 sweaters, clearance up to 86% off.",e:"2026-11-27",pk:[["Boys' water-resistant puffer",32.49,64.99]],src:["SCon"]},
+{n:"Gap",c:["fashion"],sub:"clothing",m:1,d:{t:"pct",v:40},sc:"sitewide",h:"40% off everything. The extra 60% off select big deals ran Nov 23 to 24.",pk:[],src:["CF"]},
+{n:"Lacoste",c:["fashion"],sub:"clothing",m:1,d:{t:"pct",v:40},sc:"select",h:"Up to 40% off select styles, no code, free shipping on every order.",pk:[["Men's Sport Sweatsuit",188.99,315],["Water-repellent down windbreaker",194.99,325]],src:["SClac"]},
+{n:"Mango",c:["fashion"],sub:"clothing",m:1,d:{t:"pct",v:50},sc:"select",h:"Up to 50% off selected items.",s:"2026-11-19",e:"2026-11-30",pk:[],src:["CF"]},
+{n:"Uniqlo",c:["fashion"],sub:"clothing",m:1,d:{t:"txt",l:"Thank You Event",k:"special pricing"},sc:"select",h:"Thank You Event pricing across the family. Free packable tote on $120+ ran Nov 19 to 22.",s:"2026-11-19",e:"2026-11-26",pk:[],src:["CF","YH"]},
+{n:"Nike",c:["fashion","shoes"],sub:"shoes",m:1,d:{t:"pct",v:50},sc:"select",h:"Up to 50% off in Nike Canada's Black Friday sale.",pk:[],src:["SC2"]},
+{n:"Mountain Warehouse",c:["fashion"],sub:"clothing",m:1,d:{t:"pct",v:50,k:"50% or more"},sc:"sitewide",h:"50% or more off everything. Free tracked shipping on $120+.",pk:[["Banff women's waterproof snow boots",109.99,219.99]],src:["SCmw","BM"]},
+{n:"Columbia",c:["fashion"],sub:"clothing",m:1,d:{t:"pct",v:50},sc:"select",h:"Up to 50% off jackets and hiking boots.",pk:[["Men's Snowtrekker II Boot",112,160]],src:["YH"]},
+{n:"Harry Rosen",c:["fashion"],sub:"clothing",m:1,ca:1,ret:1,d:{t:"pct",v:40},sc:"select",h:"Up to 40% off thousands of designer styles, including Tumi, BOSS and Psycho Bunny.",pk:[],tip:"The easiest way to get BOSS, Psycho Bunny or Tumi on sale this week.",src:["YH"]},
+{n:"RW&CO",c:["fashion"],sub:"clothing",m:1,ca:1,d:{t:"pct",v:40},sc:"select",h:"Early sale: 40% off tops, accessories, outerwear and more.",pk:[],src:["SC5"]},
+{n:"Bluenotes",c:["fashion"],sub:"clothing",m:1,ca:1,d:{t:"pct",v:60},sc:"select",h:"Pre-Black Friday sale, up to 60% off.",pk:[],src:["SC3"]},
+{n:"OAK + FORT",c:["fashion"],sub:"clothing",m:1,ca:1,d:{t:"pct",v:69},sc:"select",h:"Black Friday markdowns on outerwear and basics.",pk:[["Oversized trench coat",136,188],["Twill wide leg pant",24,78]],src:["BFO"]},
+{n:"Dynamite",c:["fashion"],sub:"clothing",m:1,ca:1,d:{t:"txt",l:"Starts Nov 25",k:"discount not announced"},sc:"select",h:"Black Friday sale starts Nov 25 online and in stores, with deals on tops, sweaters, jeans and coats. Discount not announced as of Nov 23.",s:"2026-11-25",pk:[],src:["LOB"]},
+{n:"Garage",c:["fashion"],sub:"clothing",m:1,ca:1,d:{t:"txt",l:"Starts Nov 28",k:"discount not announced"},sc:"select",h:"Main Black Friday sale reported to start Nov 28, with sale picks already live.",s:"2026-11-28",pk:[],src:["PH"]},
+{n:"Bikini Village",c:["fashion"],sub:"clothing",m:1,ca:1,d:{t:"txt",l:"Starts Nov 27",k:"details not posted"},sc:"select",h:"Black Friday deals start Nov 27 online and in stores. Discounts not posted yet.",s:"2026-11-27",pk:[],src:["BV"]},
+{n:"Under Armour",c:["fashion"],sub:"clothing",d:{t:"pct",v:40},sc:"sitewide",h:"30% off regular-price styles and 40% off outlet, sitewide with a code. Free shipping on $75+.",e:"2026-11-29",code:[["BLACKFRIDAY","30 to 40% off"]],pk:[],src:["CF","YH"]},
+{n:"The North Face",c:["fashion"],sub:"clothing",d:{t:"pct",v:40},sc:"select",h:"Sale styles up to 40% off, plus 35% off regular price when you spend $250.",pk:[],src:["SC"]},
+{n:"MEC",c:["fashion","home"],sub:"clothing",ca:1,ret:1,d:{t:"pct",v:40},sc:"select",h:"Up to 40% off outdoor gear, up to 25% off select insulated jackets and shells, up to $350 off select Garmin watches.",pk:[["Arc'teryx Thorium AR Hoody, women's",480,600],["Arc'teryx Cormac short sleeve, men's",70,100]],tip:"Arc'teryx doesn't run its own Black Friday sale; MEC and Altitude Sports discount it.",src:["YH","MC"]},
+{n:"Knix",c:["fashion"],sub:"clothing",m:1,ca:1,d:{t:"pct",v:50},sc:"sitewide",h:"Up to 50% off everything.",pk:[["Classic Cotton PJ Set",60,120],["Super Leakproof High Rise",28.8,36]],src:["YH","GN","BFO"]},
+{n:"Kit and Ace",c:["fashion"],sub:"clothing",ca:1,d:{t:"pct",v:45},sc:"select",h:"Up to 45% off select pants and knitwear.",pk:[["Seymour Classic Ankle Pants",99,180],["Nord Merino Argyle Vest",96,160]],src:["CQ","BFO"]},
+{n:"Adidas",c:["fashion","shoes"],sub:"shoes",d:{t:"pct",v:60},sc:"select",h:"Up to 60% off. More than 1,400 items already marked down, no code needed.",pk:[["Ultraboost 5X",92,230],["Gazelle Bold",64,160],["Galaxy 7 running shoes",45,90]],src:["CQ","CF","YH"]},
+{n:"Sport Chek",c:["fashion"],sub:"clothing",m:1,ca:1,ret:1,d:{t:"pct",v:60},sc:"select",h:"Up to 60% off select brands and styles, including ski, hockey, footwear and jackets.",s:"2026-11-26",e:"2026-12-02",pk:[["Salomon QST 92 skis",454,699]],src:["CF","CQ","BFO"]},
+{n:"JD Sports",c:["fashion","shoes"],sub:"shoes",m:1,ret:1,d:{t:"pct",v:60},sc:"select",h:"Up to 60% off selected sneakers, clothing and accessories from Nike, adidas, New Balance, Jordan and more.",e:"2026-11-30",pk:[],src:["JD"]},
+// Fashion: shoes
+{n:"SoftMoc",c:["fashion"],sub:"shoes",m:1,ca:1,ret:1,d:{t:"pct",v:50},sc:"select",h:"Black Friday sale on now across boots and sneakers from Skechers, Steve Madden, Vessi and others.",pk:[["Skechers Contour Foam Cozy Fit, men's",87.49,124.99],["Vessi Weekend 1.5",112.49,149.99],["Steve Madden Paladium knee-high boot",127.49,149.99]],tip:"The easiest place to get Skechers and Steve Madden on sale this week.",src:["SM"]},
+{n:"Vessi",c:["fashion"],sub:"shoes",m:1,ca:1,d:{t:"pct",v:40},sc:"select",h:"Up to 40% off select waterproof styles, plus gift certificates up to $75 with qualifying purchases.",pk:[],src:["BCB"]},
+{n:"ALDO",al:"Aldo accessories",c:["fashion"],sub:"shoes",m:1,ca:1,d:{t:"pct",v:50},sc:"select",h:"Up to 50% off sale styles, plus an extra 30% off clearance online.",e:"2026-11-25",pk:[],src:["CF","YH"]},
+// Fashion: bags, jewellery, accessories
+{n:"Michael Kors",c:["fashion"],sub:"acc",m:1,d:{t:"pct",v:25},sc:"sitewide",h:"25% off everything sitewide, including bags and accessories already marked down. Extra 25% off in the Outlet until Dec 3.",e:"2026-12-03",pk:[["Jet Set small pebbled leather card case wristlet",37,98],["Jet Set Travel small wristlet",41,178]],src:["YH","CF"]},
+{n:"Coach Outlet",al:"Coach",c:["fashion"],sub:"acc",m:1,d:{t:"pct",v:60},sc:"select",h:"Up to 60% off bags, wallets, wristlets and shoes.",pk:[],tip:"This is Coach Outlet. No Canadian sale was found for full-price Coach stores yet.",src:["SCco","YH"]},
+{n:"Kate Spade",c:["fashion"],sub:"acc",m:1,d:{t:"pct",v:70},sc:"select",h:"Up to 50% off at Kate Spade, and Kate Spade Outlet has 70% off plus an extra 25% off thousands of styles.",pk:[],src:["KS","YH"]},
+{n:"Tory Burch",c:["fashion"],sub:"acc",m:1,d:{t:"pct",v:30},sc:"select",h:"30% off when you spend over $250.",pk:[],src:["YH"]},
+{n:"Mejuri",c:["fashion"],sub:"acc",m:1,ca:1,d:{t:"pct",v:30},sc:"sitewide",h:"Up to 30% off everything, diamonds included.",pk:[["Dome Huggies",126.4,158]],src:["YH","GN"]},
+{n:"Pandora",c:["fashion"],sub:"acc",m:1,d:{t:"pct",v:40},sc:"members",h:"Up to 40% off charm bracelets, engravables and more for My Pandora members, plus a free bracelet when you spend $175.",pk:[],src:["PA"]},
+{n:"Swarovski",c:["fashion"],sub:"acc",m:1,d:{t:"pct",v:40},sc:"select",h:"Up to 40% off, plus an extra 20% off when you buy two or more.",s:"2026-11-18",pk:[],src:["SW"]},
+{n:"Michael Hill",c:["fashion"],sub:"acc",m:1,d:{t:"pct",v:40},sc:"sitewide",h:"25 to 40% off almost everything, online and in store.",pk:[],src:["MH"]},
+{n:"Peoples Jewellers",c:["fashion"],sub:"acc",m:1,ca:1,d:{t:"pct",v:50},sc:"sitewide",h:"Up to 50% off select styles and up to 40% off everything else, plus an extra 10% off orders of $1,999+.",pk:[["1 ct lab-grown diamond tennis bracelet",499.98,999]],src:["PJ"]},
+// Fashion: eyewear
+{n:"Clearly",c:["fashion"],sub:"eyewear",m:1,ca:1,d:{t:"pct",v:60},sc:"select",h:"Up to 50% off Ray-Ban and Oakley frames, 60% off lenses, 25% off contacts with free shipping.",pk:[["Ray-Ban Meta Wayfarer (Gen 2)",456.75,609],["Oakley Meta HSTN",404.25,539]],src:["SCcl"]},
+{n:"BonLook",c:["fashion"],sub:"eyewear",m:1,ca:1,d:{t:"pct",v:30},sc:"sitewide",h:"30% off frames and lenses, online and in store.",s:"2026-11-19",e:"2026-11-30",pk:[],src:["BL"]},
+{n:"Bailey Nelson",c:["fashion"],sub:"eyewear",m:1,d:{t:"pct",v:60},sc:"select",h:"Up to 60% off selected frames, lenses included. Also 2 pairs from $249, and buy 3 get 1 free on its contacts in store until Dec 1.",s:"2026-12-04",pk:[],tip:"Its offers page lists the frame sale as starting Dec 4.",src:["BN"]},
+// Tech
+{n:"Apple",c:["tech"],m:1,d:{t:"card",v:420},sc:"select",h:"Apple Gift Card up to $420 with an eligible product, only at Apple.ca and Apple Stores. You pay full price and get the card for later.",s:"2026-11-27",e:"2026-11-30",pk:[["AirPods Pro 3",0,0,"","$70 gift card"],["AirPods Max 2",0,0,"","$105 gift card"],["Apple Watch Ultra 4",0,0,"","$140 gift card"],["iPhone 17e",0,0,"","$70 gift card"]],tip:"Amazon.ca had AirPods Pro 3 at $229 as a straight price cut.",src:["CF","AP","YH"]},
+{n:"Samsung",c:["tech","home"],m:1,d:{t:"off",v:3500},sc:"select",h:"Up to $3,500 off select products: up to $1,800 off OLED TVs, $1,300 off monitors, $600 off soundbars, $500 off select appliances.",s:"2026-11-06",pk:[["65-inch OLED S90H TV",1999.99,2999.99],["85-inch Neo QLED QN80H TV",2199.99,3499.99],["Galaxy Book6 Pro 14-inch",2199.99,2499.99]],src:["SCsam","SA","CF"]},
+{n:"Best Buy",al:"Best Buy Mobile Best Buy Express",c:["tech","home"],m:1,ret:1,d:{t:"off",v:1200},sc:"select",h:"Up to $500 off laptops, $1,200 off smart TVs and 48% off select headphones and speakers. Black Friday Price badge items are refunded if they drop lower.",s:"2026-11-19",e:"2026-12-03",pk:[["LG C4 65-inch OLED",2099,2699],["Beats Studio Pro",399.99,469.99],["JBL Tune 780NC headphones",100,200]],tip:"Best Buy Mobile and Best Buy Express stores carry the same phone and accessory deals.",src:["SCbb","CQ","BFO","YH"]},
+{n:"EB Games",c:["tech"],m:1,ca:1,ret:1,d:{t:"pct",v:65},sc:"select",h:"Up to 65% off games and merchandise, with each deal running on its own dates.",pk:[["Donkey Kong Bananza (Switch 2)",44.99,89.99,"","Nov 26 to Dec 2"],["Marvel's Wolverine (PS5)",64.99,89.99]],src:["EB"]},
+{n:"Bell",c:["tech"],m:1,ca:1,d:{t:"txt",l:"$1/mo",k:"Pixel 11 Pro from"},sc:"select",h:"Pixel 11 Pro from $1/month and iPhone 17 from $2/month in store with an eligible trade-in. Keeping the phone after 24 months costs extra.",pk:[],src:["ICb","BM"]},
+{n:"Rogers",c:["tech"],m:1,ca:1,d:{t:"txt",l:"$0/mo",k:"Pixel 11 Pro"},sc:"select",h:"Pixel 11 Pro at $0/month for 24 months on a 5G+ plan, applied as bill credits. You return the phone at the end.",pk:[],src:["CQP"]},
+{n:"Telus",c:["tech"],m:1,ca:1,d:{t:"txt",l:"$0/mo",k:"Pixel 11 from"},sc:"select",h:"Pixel 11 from $0/month, Galaxy S26 from $5/month through Bring-It-Back. Buy One, Give One: a phone donated for every qualifying purchase Nov 27 to 29.",pk:[],src:["PHB","ICt"]},
+{n:"Koodo",c:["tech"],m:1,ca:1,d:{t:"txt",l:"$45",k:"60 GB plan"},sc:"select",h:"60 GB Canada-wide 5G for $45/month with autopay, plus a free account perk.",pk:[],src:["RFD"]},
+{n:"Fido",c:["tech"],m:1,ca:1,d:{t:"txt",l:"$45",k:"60 GB plan"},sc:"select",h:"60 GB Canada-wide 5G for $45/month with autopay. Pixel 11 for $9.99/month over 24 months on Plus plans.",pk:[],src:["RFD","BM"]},
+{n:"Virgin Plus",c:["tech"],m:1,ca:1,d:{t:"txt",l:"$45",k:"60 GB plan"},sc:"select",h:"60 GB for $45/month (was $50), or $50/month with Canada-U.S.-Mexico use.",pk:[],src:["RFD","ICb"]},
+{n:"Freedom Mobile",c:["tech"],m:1,ca:1,d:{t:"txt",l:"$40",k:"100 GB plan"},sc:"select",h:"Bonus data: 40 GB for $35 or 100 GB for $40/month with an eligible phone purchase. Home internet $39/month for a year with a mobile line.",s:"2026-11-17",pk:[],src:["ICf","CQP"]},
+{n:"Chatr",c:["tech"],m:1,ca:1,d:{t:"txt",l:"$199",k:"60 GB for a year"},sc:"select",h:"Prepaid long-term plans: 90 GB over six months for $150, or 60 GB for a year for $199.",pk:[],src:["ICc"]},
+{n:"Google",c:["tech"],d:{t:"off",v:500},sc:"select",h:"Up to $500 off Pixel phones, plus deals on Pixel Watch, earbuds and Nest.",s:"2026-11-18",pk:[["Pixel 11",899,1249],["Pixel 11 Pro XL",1299,1799],["Pixel Buds Pro 2",219,299]],src:["GO"]},
+{n:"Amazon.ca",c:["tech","home","beauty"],ret:1,d:{t:"pct",v:67},sc:"select",h:"Black Friday Week: up to 67% off select devices and up to 50% off select coffee and espresso machines.",s:"2026-11-19",e:"2026-11-30",pk:[["Nintendo Switch 2 + Mario Kart World",679.96,749.96],["AirPods Pro 3",228.99,329],["Bose QuietComfort headphones",249,479]],src:["CQ","GN","YH"]},
+{n:"Staples",c:["tech"],ret:1,d:{t:"off",v:400},sc:"select",h:"Up to $400 off laptops and desktops and up to $200 off printers.",s:"2026-11-21",e:"2026-11-27",pk:[],src:["CF"]},
+{n:"JBL",c:["tech"],d:{t:"pct",v:50},sc:"select",h:"Black Friday sale on speakers and earbuds.",pk:[["Charge 6 speaker",179.98,249.98],["Vibe Beam 2 earbuds",49.98,99.98]],src:["CQ"]},
+{n:"Shokz",c:["tech"],d:{t:"pct",v:40},sc:"select",h:"Up to 40% off, its biggest sale of the year.",pk:[["OpenRun Pro 2",175,250]],src:["YH"]},
+// Beauty
+{n:"Sephora",c:["beauty"],m:1,ret:1,d:{t:"pct",v:50},sc:"select",h:"Up to 50% off select beauty until Nov 30, with a new set of brands at 30% off each day. Nov 25: Anastasia Beverly Hills, Lancôme and Viktor&Rolf.",s:"2026-11-23",e:"2026-11-30",code:[["CYBERSCENT","4x points on fragrance"],["GRABMYBAG","free sample bag"]],pk:[["Make Up For Ever HD Skin sculpting palette",59.5,119],["Sol de Janeiro tote + body set",29.75,66],["Sephora Collection mascara trio",29,42]],src:["SCseph","CF","YH"]},
+{n:"Saje",c:["beauty"],m:1,ca:1,d:{t:"pct",v:40},sc:"sitewide",h:"Up to 40% off sitewide, online and in store. Free 10 ml diffuser blend on $100+, free shipping on $60+.",pk:[["Community Favourites diffuser blend collection",43.2,72],["Peppermint Halo duo",63,84]],src:["SCsaje"]},
+{n:"The Ordinary",al:"Deciem",c:["beauty"],m:1,ca:1,d:{t:"pct",v:23},sc:"sitewide",h:"Slowvember: 23% off sitewide and in store.",pk:[],src:["BFO"]},
+{n:"L'Occitane",c:["beauty"],m:1,d:{t:"pct",v:20},sc:"sitewide",h:"20% off full-priced products with a code. Gift sets excluded; $9.99 shipping.",code:[["FRIDAY","20% off"]],pk:[],src:["SCloc"]},
+{n:"Bath & Body Works",c:["beauty","home"],m:1,d:{t:"deal",v:3,l:"3 + 3"},sc:"select",h:"Buy 3 get 3 free or buy 2 get 1 free on full-size body care, all hand soaps $3.25, and a $6.95 gift bag with any purchase.",pk:[["3-wick candle",13.95,26.95],["Hand soap",3.25,0]],src:["CF","SC5","SC2"]},
+{n:"The Body Shop",c:["beauty"],m:1,d:{t:"pct",v:50},sc:"sitewide",h:"Up to 50% off sitewide.",pk:[["Classic Beauty advent calendar",75,100]],src:["YH"]},
+{n:"Shoppers Drug Mart",c:["beauty"],ca:1,ret:1,d:{t:"pct",v:25},sc:"select",h:"25% off select beauty brands in daily early deals, plus a PC Optimum points event.",s:"2026-11-19",e:"2026-11-25",pk:[],src:["CF"]},
+{n:"Dyson",c:["beauty","home"],d:{t:"off",v:600},sc:"select",h:"Up to $600 off select hair care and floorcare. Best Black Friday price guaranteed on Dyson.ca.",pk:[["Airwrap i.d. multi-styler",599.99,799.99,"Amazon.ca"],["V15 Detect Total Clean Extra",849,1049],["V8 Cyclone vacuum",349.99,549.99]],src:["CF","CQ","GN","BFO"]},
+{n:"Lancôme",c:["beauty"],d:{t:"pct",v:30},sc:"sitewide",h:"30% off sitewide.",pk:[],src:["YH"]},
+{n:"Olaplex",c:["beauty"],d:{t:"pct",v:30},sc:"sitewide",h:"30% off sitewide with a code.",code:[["CYBER","30% off"]],pk:[],src:["YH"]},
+{n:"Tatcha",c:["beauty"],d:{t:"pct",v:25},sc:"sitewide",h:"25% off sitewide, plus gifts on $100+ with a code.",code:[["CYBER26","gifts on $100+"]],pk:[["The Water Cream",69.75,93]],src:["YH","GN"]},
+{n:"MERIT",c:["beauty"],d:{t:"pct",v:25},sc:"sitewide",h:"25% off orders over $150, 20% off everything else.",pk:[["Five Minute Morning kit",193.6,242]],src:["YH","GN"]},
+{n:"Foreo",c:["beauty"],d:{t:"pct",v:50},sc:"select",h:"Up to 50% off, plus an extra 35% off with a code.",code:[["BFNOW2026","extra 35% off"]],pk:[],src:["YH"]},
+// Home
+{n:"Nespresso",c:["home"],m:1,d:{t:"pct",v:50},sc:"select",h:"50% off select machines and milk frothers.",pk:[["Vertuo Pop+ Deluxe",99,199]],src:["YH","BFO"]},
+{n:"Article",c:["home"],ca:1,d:{t:"pct",v:40},sc:"select",h:"Up to 40% off bedroom, dining and living room furniture.",pk:[["Sven 72-inch tufted loveseat",939,1449],["Prima 6-drawer double dresser, walnut",1479,1849]],src:["YH","GN"]},
+{n:"Silk & Snow",c:["home"],ca:1,d:{t:"pct",v:40},sc:"select",h:"Up to 40% off mattresses, bed frames and bedding.",pk:[],src:["YH"]},
+{n:"Sleep Country",c:["home"],ca:1,ret:1,d:{t:"pct",v:30},sc:"sitewide",h:"30% off almost everything that's regular price. Exclusions apply.",s:"2026-11-18",e:"2026-12-01",pk:[],src:["CF"]},
+{n:"IKEA",c:["home"],d:{t:"pct",v:20},sc:"members",h:"IKEA Family members save 20% on select products. Membership is free.",s:"2026-11-23",e:"2026-11-30",pk:[],src:["CF","CQ"]},
+{n:"Wayfair",c:["home"],ret:1,d:{t:"pct",v:80},sc:"select",h:"Up to 80% off furniture, small appliances and lighting, in rotating 48-hour sales.",pk:[["Candler upholstered platform bed",146.99,959.96],["Sleep by Wayfair 14-inch hybrid mattress",410,555]],src:["CF","GN","YH"]},
+{n:"KitchenAid",c:["home"],d:{t:"pct",v:20},sc:"select",h:"20% off when you buy two or more appliances on KitchenAid.ca.",pk:[["Artisan stand mixer + premium accessory pack",430,545,"Best Buy"]],src:["CF","YE"]},
+{n:"De'Longhi",c:["home"],d:{t:"pct",v:45},sc:"select",h:"Up to 45% off select espresso machines.",pk:[["Magnifica Evo automatic espresso",599.98,999.99,"Amazon.ca"]],src:["YH","GN"]},
+{n:"Zwilling and Staub",c:["home"],d:{t:"pct",v:70},sc:"select",h:"Up to 70% off kitchen essentials.",pk:[["Staub 3.7 L Dutch oven",200,400]],src:["YH","YE"]},
+{n:"Keurig",c:["home"],d:{t:"pct",v:50},sc:"select",h:"Up to 50% off select coffee makers and 20% off accessories. K-Cup savings up to $28 with a code.",e:"2026-11-30",code:[["KCUPSPROMO2026","K-Cup savings"]],pk:[],src:["CF"]}
+];
+// Brands on the mall list with no 2026 Canadian deal found: [name, cat, sub, note]
+const N=[
+["Abercrombie & Fitch","fashion","clothing"],["Armani Exchange","fashion","clothing"],["BOSS","fashion","clothing","on sale at Harry Rosen"],["Burberry","fashion","clothing","sold at Holt Renfrew"],["Candy Prom & Evening","fashion","clothing"],["Carter's OshKosh","fashion","clothing"],["COS","fashion","clothing"],["DUER","fashion","clothing","BC brand listed in BC Business roundup"],["Ever New","fashion","clothing"],["European Boutique","fashion","clothing"],["Fox","fashion","clothing"],["Gucci","fashion","clothing","sold at Holt Renfrew"],["Guess","fashion","clothing"],["H&M","fashion","clothing"],["Hot Topic","fashion","clothing"],["Indochino","fashion","clothing"],["Jack & Jones","fashion","clothing"],["La Senza","fashion","clothing"],["La Vie en Rose","fashion","clothing"],["Laura / Laura Plus","fashion","clothing"],["Levi's","fashion","clothing","featured in Global News picks"],["Lids","fashion","clothing"],["Marc Cain","fashion","clothing"],["Marc Jacobs","fashion","acc"],["Melanie Lyne","fashion","clothing"],["Moncler","fashion","clothing","sold at Holt Renfrew"],["October's Very Own","fashion","clothing"],["Pro Image","fashion","clothing"],["Psycho Bunny","fashion","clothing","on sale at Harry Rosen"],["T-Shirt Time","fashion","clothing"],["Tip Top","fashion","clothing"],["Urban Kids","fashion","clothing"],["Urban Outfitters","fashion","clothing"],["Urban Planet","fashion","clothing"],["Victoria's Secret & PINK","fashion","clothing","US sale only so far"],["Zara","fashion","clothing"],["Zumiez","fashion","clothing"],
+["B2","fashion","shoes"],["Browns Shoes","fashion","shoes"],["Call It Spring","fashion","shoes"],["Champs Sports","fashion","shoes","sale page live, no % posted"],["Foot Locker & Kids Foot Locker","fashion","shoes","US offers only so far"],["L'Intervalle","fashion","shoes"],["Skechers","fashion","shoes","on sale at SoftMoc"],["Steve Madden","fashion","shoes","on sale at SoftMoc"],
+["Armand Jewellers","fashion","acc"],["Claire's","fashion","acc"],["Diamonds Direct","fashion","acc"],["Evry Jewels","fashion","acc"],["Fossil","fashion","acc"],["Lavo Sac","fashion","acc"],["Lisa Gozlan","fashion","acc"],["Lovisa","fashion","acc"],["Marc Robinson Jewelers","fashion","acc"],["Mulu Jewelry","fashion","acc"],["Raffi Jewellers","fashion","acc"],["Rainbow Jade","fashion","acc"],["Rolex Boutique","fashion","acc","doesn't discount"],["Spence Diamonds","fashion","acc"],["Sunglass Hut","fashion","acc"],["Tiffany & Co.","fashion","acc","sold at Holt Renfrew"],["Tumi","fashion","acc","on sale at Harry Rosen"],
+["Delta Optical","fashion","eyewear"],["LensCrafters","fashion","eyewear"],["Pearle Vision","fashion","eyewear"],["Solis Optics","fashion","eyewear"],["Specsavers","fashion","eyewear"],["Warby Parker","fashion","eyewear"],
+["Aesop","beauty"],["Aveda","beauty"],["Kiehl's","beauty","US offer only so far"],["Laline","beauty"],["Lush","beauty"],["MAC","beauty","US offer only so far"],["Nutrition House","beauty"],["Perfume Shop","beauty"],["Pur & Simple","beauty"],["Trade Secrets","beauty"],
+["Mobile Care","tech"],["Mobile Klinik","tech"],["Mobile Snap","tech"],["Showcase","tech"],["Tbooth Wireless","tech"],["Wirelesswave","tech"],["WOW! Mobile Boutique","tech"],
+["Flying Tiger Copenhagen","home"],["QE Home","home"],["Super Miniso","home"]
+];
+const CATS=[["all","All"],["fashion","Fashion"],["tech","Tech"],["beauty","Beauty"],["home","Home"]];
+const SUBS=[["all","All fashion"],["clothing","Clothing"],["shoes","Shoes"],["acc","Bags & jewellery"],["eyewear","Eyewear"]];
+const esc=x=>String(x).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const fmt=v=>"$"+v.toLocaleString("en-CA",{minimumFractionDigits:v%1?2:0,maximumFractionDigits:2});
+const day=iso=>new Date(iso+"T23:59:59");
+const md=iso=>new Date(iso+"T12:00:00").toLocaleDateString("en-CA",{month:"short",day:"numeric"});
+const now=new Date();
+let st={cat:"all",sub:"all",mall:false,ca:false,site:false,code:false,star:false,q:"",sort:"depth"};
+let stars=new Set();
+try{stars=new Set(JSON.parse(localStorage.getItem("bfStars")||"[]"));const sv=JSON.parse(localStorage.getItem("bfState2")||"null");if(sv)st=Object.assign(st,sv,{q:""})}catch(e){}
+const save=()=>{try{localStorage.setItem("bfStars",JSON.stringify([...stars]));localStorage.setItem("bfState2",JSON.stringify(st))}catch(e){}};
+function status(b){
+ if(b.s&&new Date(b.s+"T00:00:00")>now)return["Starts "+md(b.s),"hot"];
+ if(b.e){const end=day(b.e);if(end<now)return["Ended "+md(b.e),"off"];const left=Math.floor((end-now)/864e5);
+  if(left<1)return["Ends today","hot"];if(left<2)return["Ends tomorrow","hot"];return["Live, ends "+md(b.e),""]}
+ return["Live, end not announced",""];
+}
+function depth(b){const d=b.d;
+ if(d.t==="pct")return`<div class="num"><small>${esc(d.k||"up to")}</small>${d.v}%</div>`;
+ if(d.t==="off")return`<div class="num"><small>up to, off</small>${fmt(d.v)}</div>`;
+ if(d.t==="card")return`<div class="num soft"><small>gift card up to</small>${fmt(d.v)}</div>`;
+ if(d.t==="txt")return`<div class="num txt"><small>${esc(d.k||"")}</small>${esc(d.l)}</div>`;
+ return`<div class="num"><small>buy 3, get 3</small>free</div>`;
+}
+const rank=b=>b.d.t==="pct"?1000+b.d.v:b.d.t==="off"?500+Math.min(b.d.v/10,400):b.d.t==="deal"?300:b.d.t==="txt"?200:100;
+function pick(p){const[n,s,r,at,note]=p;
+ const price=s?`<span class="p">${r?`<s>${fmt(r)}</s>`:""}${fmt(s)}</span>`:`<span class="p">${esc(note||"")}</span>`;
+ const pc=s&&r?`<span class="pc">${Math.round((1-s/r)*100)}% off</span>`:"";
+ const w=[pc,at?"at "+esc(at):"",s&&note?esc(note):""].filter(Boolean).join(" · ");
+ return`<li><span>${esc(n)}</span>${price}${w?`<span class="w">${w}</span>`:""}</li>`;
+}
+function row(b){const[t,cls]=status(b);const id=b.n;
+ const scope={select:"Select items",sitewide:"Sitewide",members:"Members only"}[b.sc];
+ const dates=b.s&&b.e?`${md(b.s)} to ${md(b.e)}`:b.e?`until ${md(b.e)}`:b.s?`from ${md(b.s)}`:"";
+ const codes=(b.code||[]).map(([c,w])=>`<button class="copy" data-code="${esc(c)}" aria-label="Copy code ${esc(c)}">${esc(c)}<span>${esc(w)}</span></button>`).join("");
+ const srcs=b.src.map(k=>`<a href="${S[k][1]}" target="_blank" rel="noopener">${esc(S[k][0])}</a> ${S[k][2]}`).join(", ");
+ return`<li class="row">${depth(b)}
+ <div><div class="name"><h2>${esc(b.n)}</h2>${b.ca?'<span class="tag ca">Canadian</span>':""}${b.ret?'<span class="tag">Retailer</span>':""}${b.m?'<span class="tag">At the mall</span>':""}<span class="tag">${scope}</span></div>
+ <p class="deal">${esc(b.h)}</p>
+ <div class="meta"><span class="st ${cls}">${t}</span>${dates?`<span>${dates}</span>`:""}<span>${b.c.map(c=>c[0].toUpperCase()+c.slice(1)).join(", ")}</span></div>
+ ${codes?`<div class="codes">${codes}</div>`:""}
+ ${b.tip?`<p class="tip">${esc(b.tip)}</p>`:""}</div>
+ <div class="side">${b.pk.length?`<ul class="picks">${b.pk.map(pick).join("")}</ul>`:`<p class="src">No flagship prices published yet. Check the brand's site.</p>`}
+ <button class="star" data-star="${esc(id)}" aria-pressed="${stars.has(id)}">${stars.has(id)?"On shortlist":"Add to shortlist"}</button>
+ <p class="src">Checked via ${srcs}</p></div></li>`;
+}
+const $=id=>document.getElementById(id);
+const inCat=(cats,sub)=>(st.cat==="all"||cats.includes(st.cat))&&(st.cat!=="fashion"||st.sub==="all"||sub===st.sub);
+function list(){const q=st.q.trim().toLowerCase();
+ let r=B.filter(b=>inCat(b.c,b.sub)&&(!st.mall||b.m)&&(!st.ca||b.ca)&&(!st.site||b.sc==="sitewide")&&(!st.code||b.code)&&(!st.star||stars.has(b.n))
+  &&(!q||(b.n+" "+(b.al||"")+" "+b.h+" "+b.pk.map(p=>p[0]).join(" ")).toLowerCase().includes(q)));
+ const endKey=b=>{const s=status(b)[1];return s==="off"?9e15:b.e?day(b.e).getTime():8e15};
+ if(st.sort==="depth")r.sort((a,b)=>rank(b)-rank(a)||a.n.localeCompare(b.n));
+ if(st.sort==="end")r.sort((a,b)=>endKey(a)-endKey(b)||a.n.localeCompare(b.n));
+ if(st.sort==="az")r.sort((a,b)=>a.n.localeCompare(b.n));
+ return r;
+}
+function noneList(){const q=st.q.trim().toLowerCase();
+ if(st.ca||st.site||st.code||st.star)return[];
+ return N.filter(([n,c,sub,note])=>inCat([c],sub)&&(!q||(n+" "+(note||"")).toLowerCase().includes(q))).sort((a,b)=>a[0].localeCompare(b[0]));
+}
+function render(){
+ const cnt=k=>B.filter(b=>b.c.includes(k)).length+N.filter(x=>x[1]===k).length;
+ $("tabs").innerHTML=CATS.map(([k,l])=>`<button data-cat="${k}" aria-pressed="${st.cat===k}">${l}<small>${k==="all"?B.length+N.length:cnt(k)}</small></button>`).join("");
+ $("subs").hidden=st.cat!=="fashion";
+ $("subs").innerHTML=SUBS.map(([k,l])=>`<button data-sub="${k}" aria-pressed="${st.sub===k}">${l}<small>${k==="all"?cnt("fashion"):B.filter(b=>b.c.includes("fashion")&&b.sub===k).length+N.filter(x=>x[2]===k).length}</small></button>`).join("");
+ for(const[k,el]of[["mall","fMall"],["ca","fCA"],["site","fSite"],["code","fCode"],["star","fStar"]])$(el).setAttribute("aria-pressed",st[k]);
+ $("fStar").textContent=`Shortlist (${stars.size})`;
+ $("sort").value=st.sort;
+ const r=list();
+ $("board").innerHTML=r.length?r.map(row).join(""):`<li class="empty">${st.star?"Your shortlist is empty. Tap “Add to shortlist” on any brand.":"No brands with deals match these filters."}</li>`;
+ const nl=noneList();
+ $("none").hidden=!nl.length;
+ $("noneh").textContent=`No Canadian deal found yet (${nl.length})`;
+ $("nolist").innerHTML=nl.map(([n,,,note])=>`<li><b>${esc(n)}</b>${note?`<span>${esc(note)}</span>`:""}</li>`).join("");
+ const live=B.filter(b=>{const s=status(b)[0];return!s.startsWith("Ended")&&!s.startsWith("Starts")}).length;
+ const mall=B.filter(b=>b.m).length;
+ $("counts").innerHTML=[[B.length+N.length,"brands tracked"],[B.length,"with a deal found"],[live,"live right now"],[mall,`of ${mall+N.length} brands at the mall have a deal`]].map(([v,l])=>`<div><b>${v}</b><span>${l}</span></div>`).join("");
+ save();
+}
+document.addEventListener("click",e=>{
+ const c=e.target.closest("[data-cat]");if(c){st.cat=c.dataset.cat;st.sub="all";render();return}
+ const sb=e.target.closest("[data-sub]");if(sb){st.sub=sb.dataset.sub;render();return}
+ const tg={fMall:"mall",fCA:"ca",fSite:"site",fCode:"code",fStar:"star"}[e.target.id];if(tg){st[tg]=!st[tg];render();return}
+ const s=e.target.closest("[data-star]");if(s){const n=s.dataset.star;stars.has(n)?stars.delete(n):stars.add(n);render();return}
+ const cp=e.target.closest("[data-code]");if(cp){const code=cp.dataset.code;const sp=cp.querySelector("span");const old=sp.textContent;
+  Promise.resolve().then(()=>navigator.clipboard.writeText(code)).then(()=>{sp.textContent="copied"},()=>{sp.textContent="select and copy"}).finally(()=>setTimeout(()=>{sp.textContent=old},1600))}
+});
+$("q").addEventListener("input",e=>{st.q=e.target.value;render()});
+$("sort").addEventListener("change",e=>{st.sort=e.target.value;render()});
+$("upd").innerHTML=`<b>Last updated ${esc(UPDATED)}</b> · refreshed twice a day through Cyber Monday`;
+$("srcs").innerHTML=Object.values(S).map(([n,u,d])=>`<li><a href="${u}" target="_blank" rel="noopener">${esc(n)}</a>, checked ${d}</li>`).join("");
+render();
+}
+</script>
+</body>
+</html>
